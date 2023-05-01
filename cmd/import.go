@@ -78,6 +78,7 @@ func newImportCmd() *cobra.Command {
 		Short: "Don't sort resources",
 		Long:  "Don't sort resources",
 	})
+	log.Println("step 3 range providerImporterSubcommands")
 	for _, subcommand := range providerImporterSubcommands() {
 		providerCommand := subcommand(options)
 		_ = providerCommand.MarkPersistentFlagRequired("resources")
@@ -87,13 +88,15 @@ func newImportCmd() *cobra.Command {
 }
 
 func Import(provider terraformutils.ProviderGenerator, options ImportOptions, args []string) error {
-
+	log.Println("step 6 Import")
 	providerWrapper, options, err := initOptionsAndWrapper(provider, options, args)
 	if err != nil {
 		return err
 	}
 	defer providerWrapper.Kill()
+	log.Println("step 12 before NewProvidersMapping")
 	providerMapping := terraformutils.NewProvidersMapping(provider)
+	log.Printf("providerMapping: %v", providerMapping)
 
 	err = initAllServicesResources(providerMapping, options, args, providerWrapper)
 	if err != nil {
@@ -115,6 +118,8 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 }
 
 func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options ImportOptions, args []string) (*providerwrapper.ProviderWrapper, ImportOptions, error) {
+	log.Println("step 7 initOptionsAndWrapper")
+	log.Printf("args: %v", args)
 	err := provider.Init(args)
 	if err != nil {
 		return nil, options, err
@@ -142,6 +147,8 @@ func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options Im
 		options.Resources = localSlice
 	}
 
+	log.Println("step 9 NewProviderWrapper")
+	log.Printf("provider getconfig: %v", provider.GetConfig())
 	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose, map[string]int{"retryCount": options.RetryCount, "retrySleepMs": options.RetrySleepMs})
 	if err != nil {
 		return nil, options, err
@@ -151,7 +158,9 @@ func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options Im
 }
 
 func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping, options ImportOptions, args []string, providerWrapper *providerwrapper.ProviderWrapper) error {
+	log.Println("step 13 initAllServicesResources")
 	numOfResources := len(options.Resources)
+	log.Printf("numOfResources: %d", numOfResources)
 	var wg sync.WaitGroup
 	wg.Add(numOfResources)
 
@@ -163,6 +172,7 @@ func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping,
 		if err != nil {
 			return err
 		}
+		log.Printf("step 14 initServiceResources, cur service: %s", service)
 		err = initServiceResources(service, serviceProvider, options, providerWrapper)
 		if err != nil {
 			failedServices = append(failedServices, service)
@@ -205,6 +215,8 @@ func initServiceResources(service string, provider terraformutils.ProviderGenera
 		log.Printf("%s error importing %s, err: %s\n", provider.GetName(), service, err)
 		return err
 	}
+	log.Println("step 16 parse filters")
+	log.Printf("options filter: %v", options.Filter)
 	provider.GetService().ParseFilters(options.Filter)
 	err = provider.GetService().InitResources()
 	if err != nil {

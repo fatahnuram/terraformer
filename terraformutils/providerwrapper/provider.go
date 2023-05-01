@@ -61,6 +61,7 @@ type ProviderWrapper struct {
 }
 
 func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool, options ...map[string]int) (*ProviderWrapper, error) {
+	log.Println("step 10 inside NewProviderWrapper")
 	p := &ProviderWrapper{retryCount: 5, retrySleepMs: 300}
 	p.providerName = providerName
 	p.config = providerConfig
@@ -209,6 +210,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 }
 
 func (p *ProviderWrapper) initProvider(verbose bool) error {
+	log.Println("step 11 initProvider")
 	providerFilePath, err := getProviderFileName(p.providerName)
 	if err != nil {
 		return err

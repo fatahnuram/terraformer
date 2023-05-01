@@ -64,6 +64,7 @@ func (s *Service) SetVerbose(verbose bool) {
 func (s *Service) ParseFilters(rawFilters []string) {
 	s.Filter = []ResourceFilter{}
 	for _, rawFilter := range rawFilters {
+		log.Printf("step 17 inside parse filters, cur raw filter: %s", rawFilter)
 		filters := s.ParseFilter(rawFilter)
 		s.Filter = append(s.Filter, filters...)
 	}
@@ -72,14 +73,17 @@ func (s *Service) ParseFilters(rawFilters []string) {
 func (s *Service) ParseFilter(rawFilter string) []ResourceFilter {
 	var filters []ResourceFilter
 	if !strings.HasPrefix(rawFilter, "Name=") && len(strings.Split(rawFilter, "=")) == 2 {
+		log.Println("step 18 proceed if")
 		parts := strings.Split(rawFilter, "=")
 		serviceName, resourcesID := parts[0], parts[1]
+		log.Printf("step 18 parse raw filter, serviceName: %s, resourcesID: %s, parsedfilters: %v", rawFilter, resourcesID, ParseFilterValues(resourcesID))
 		filters = append(filters, ResourceFilter{
 			ServiceName:      serviceName,
 			FieldPath:        "id",
 			AcceptableValues: ParseFilterValues(resourcesID),
 		})
 	} else {
+		log.Println("step 18 proceed else")
 		parts := strings.Split(rawFilter, ";")
 		if !((len(parts) == 1 && strings.HasPrefix(rawFilter, "Name=")) || len(parts) == 2 || len(parts) == 3) {
 			log.Print("Invalid filter: " + rawFilter)

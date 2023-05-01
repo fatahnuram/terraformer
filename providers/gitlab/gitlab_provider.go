@@ -15,6 +15,7 @@
 package gitlab
 
 import (
+	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -55,6 +56,7 @@ func (p *GitLabProvider) GetConfig() cty.Value {
 
 // Init GitLabProvider with group
 func (p *GitLabProvider) Init(args []string) error {
+	log.Println("step 8 Init")
 	p.group = args[0]
 	p.baseURL = gitLabDefaultURL
 	if len(args) < 2 {
@@ -78,6 +80,7 @@ func (p *GitLabProvider) GetName() string {
 }
 
 func (p *GitLabProvider) InitService(serviceName string, verbose bool) error {
+	log.Println("step 15 inside InitService")
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New(p.GetName() + ": " + serviceName + " not supported service")

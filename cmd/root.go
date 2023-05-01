@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
@@ -25,6 +27,7 @@ func NewCmdRoot() *cobra.Command {
 		SilenceErrors: true,
 		Version:       version,
 	}
+	log.Println("step 2 inside NewCmdRoot")
 	cmd.AddCommand(newImportCmd())
 	cmd.AddCommand(newPlanCmd())
 	cmd.AddCommand(versionCmd)
@@ -32,6 +35,7 @@ func NewCmdRoot() *cobra.Command {
 }
 
 func Execute() error {
+	log.Println("step 1 NewCmdRoot")
 	cmd := NewCmdRoot()
 	return cmd.Execute()
 }
