@@ -76,7 +76,7 @@ func (s *Service) ParseFilter(rawFilter string) []ResourceFilter {
 		log.Println("step 18 proceed if")
 		parts := strings.Split(rawFilter, "=")
 		serviceName, resourcesID := parts[0], parts[1]
-		log.Printf("step 18 parse raw filter, serviceName: %s, resourcesID: %s, parsedfilters: %v", rawFilter, resourcesID, ParseFilterValues(resourcesID))
+		log.Printf("step 18 parse raw filter parts: %v, serviceName: %s, resourcesID: %s, parsedfilters: %v", parts, serviceName, resourcesID, ParseFilterValues(resourcesID))
 		filters = append(filters, ResourceFilter{
 			ServiceName:      serviceName,
 			FieldPath:        "id",
